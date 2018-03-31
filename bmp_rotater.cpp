@@ -32,7 +32,6 @@ bool readbmp(const char *bmpname,const char *outname)
 	int Height = oldWidth;
 	auto DataSize = ((Width * jw + 3)&(~3))*Height;
 	unsigned char* colorData = new unsigned char[DataSize];
-	//memset(colorData, 0, sizeof(colorData));
 	for (int i = 0; i < Height; i++) {
 		for (int j = 0; j < Width; j++) {
 			*(colorData + (i*Width + j) * jw) = *(oldColorData + (j*oldWidth + (Height - 1 - i)) * jw);
@@ -41,7 +40,6 @@ bool readbmp(const char *bmpname,const char *outname)
 			if (jw == 4) {
 				*(colorData + (i*Width + j) * jw + 3) = *(oldColorData + (j*oldWidth + (Height - 1 - i)) * jw + 3);
 			}
-			//*(colorData + i*Width + j) = *(oldColorData + j*oldWidth + i);
 		}
 	}
 	ofstream outFile(outname, ios::out | ios::binary);
@@ -55,10 +53,6 @@ bool readbmp(const char *bmpname,const char *outname)
 	outFile.write((char*)colorData, DataSize);
 	inFile.close();
 	outFile.close();
-	/*for (int i = 0; i < oldHeight; i++) {
-		inFile.read((char*)(colorData + i*oldHeight), DataSizePerLine);
-	}*/
-	//cout << "0000-0001: " << hex << p << endl;
 }
 
 int main(int argc,char * argv[]) {
