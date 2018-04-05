@@ -5,7 +5,7 @@
 #include <string>
 using namespace std;
 
-bool readbmp(const char *bmpname,const char *outname)
+bool readbmp(const char *bmpname, const char *outname)
 {
 	ifstream inFile(bmpname, ios::in | ios::binary);
 	if (!inFile)
@@ -24,21 +24,23 @@ bool readbmp(const char *bmpname,const char *outname)
 	int oldWidth = bitMapInfo.biWidth;
 	int oldHeight = bitMapInfo.biHeight;
 	const int jw = bitMapInfo.biBitCount == 32 ? 4 : 3;
-	auto oldDatasize = ((oldWidth * jw + 3)&(~3))*oldHeight;
+	auto oldDataPer = ((oldWidth * jw + 3)&(~3));
+	auto oldDatasize = oldDataPer*oldHeight;
 	unsigned char* oldColorData = new unsigned char[oldDatasize];
 	inFile.read((char*)oldColorData, oldDatasize);
 
 	int Width = oldHeight;
 	int Height = oldWidth;
-	auto DataSize = ((Width * jw + 3)&(~3))*Height;
+	auto DataPer = ((Width * jw + 3)&(~3));
+	auto DataSize = DataPer*Height;
 	unsigned char* colorData = new unsigned char[DataSize];
 	for (int i = 0; i < Height; i++) {
 		for (int j = 0; j < Width; j++) {
-			*(colorData + (i*Width + j) * jw) = *(oldColorData + (j*oldWidth + (Height - 1 - i)) * jw);
-			*(colorData + (i*Width + j) * jw + 1) = *(oldColorData + (j*oldWidth + (Height - 1 - i)) * jw + 1);
-			*(colorData + (i*Width + j) * jw + 2) = *(oldColorData + (j*oldWidth + (Height - 1 - i)) * jw + 2);
+			*(colorData + i*DataPer + j*jw) = *(oldColorData + j*oldDataPer + (Height - 1 - i) * jw);
+			*(colorData + i*DataPer + j*jw + 1) = *(oldColorData + j*oldDataPer + (Height - 1 - i) * jw + 1);
+			*(colorData + i*DataPer + j*jw + 2) = *(oldColorData + j*oldDataPer + (Height - 1 - i) * jw + 2);
 			if (jw == 4) {
-				*(colorData + (i*Width + j) * jw + 3) = *(oldColorData + (j*oldWidth + (Height - 1 - i)) * jw + 3);
+				*(colorData + i*DataPer + j * jw + 3) = *(oldColorData + j*oldDataPer + (Height - 1 - i) * jw + 3);
 			}
 		}
 	}
@@ -55,15 +57,15 @@ bool readbmp(const char *bmpname,const char *outname)
 	outFile.close();
 }
 
-int main(int argc,char * argv[]) {
+int main(int argc, char * argv[]) {
 	cout << "Welcome to use Picture_Rotate Tool!" << endl;
 	string s1; string s2;
 	switch (argc) {
 	case 1:
 		cout << "From:";
-		 cin >> s1;
+		cin >> s1;
 		cout << "To:";
-		 cin >> s2;
+		cin >> s2;
 		readbmp(s1.c_str(), s2.c_str());
 		break;
 	case 3:
